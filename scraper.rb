@@ -3,7 +3,7 @@ require "nokogiri"
 require "pry"
 require_relative "product"
 
-website = "http://www.bcliquorstores.com/product-catalogue?type=wine&start=10"
+website = "http://www.bcliquorstores.com/product-catalogue"
 begin
 @doc = Nokogiri::HTML(open(website))
 rescue
@@ -80,10 +80,6 @@ def get_names
   units = grab_text(@doc.xpath("//div[contains(@class, 'productlistdetail')]/h3"))
 end
 
-def get_products
-  products = @doc.xpath("//ul[contains(@class, 'content')]/li")
-end
-
 def get_volume
   volumes = grab_text(@doc.xpath("//li[contains(@class, 'product-detail-item Volume')]"))
 end
@@ -116,6 +112,18 @@ def get_stores
   units = grab_stores(@doc.xpath("//div[contains(@class, 'inventory')]"))
 end
 
+############ -------------- Product Creator ------------------ ##############
+def generate_product_array
+  product_full = get_names.zip(get_volume,get_country,get_skus,get_ratings,get_number_of_votes,get_price,get_units,get_stores)
+end
 
-get_price
+def populate_products
+  productarr = []
+  generate_product_array.each do |attribute|
+    productarr << Product.new(attribute[0],attribute[1],attribute[2],attribute[3],attribute[4],attribute[5],attribute[6],attribute[7],attribute[8])
+  end
+  return productarr
+end
+
+
 binding.pry
