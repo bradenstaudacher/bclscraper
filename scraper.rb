@@ -43,14 +43,43 @@ def grab_price(arr)
   return array_of_blank.compact
 end
 
+def grab_units(arr)
+array_of_blank = []
+  arr.each do |content|
+    array_of_blank << grab_units_from_string(content.text())
+  end
+  return array_of_blank
+end
+
+def grab_stores(arr)
+array_of_blank = []
+  arr.each do |content|
+    array_of_blank << grab_stores_from_string(content.text())
+  end
+  return array_of_blank
+end
+
 def no_dollar_signs(string)
   if !!(string =~ /\$[\d]+\.[\d]{2}/)
     return /\$([\d]+\.[\d]{2})/.match(string)[1]
   end
 end
 
+def grab_units_from_string(string)
+  return /([\d]+).* ([\d]+)/.match(string)[1]
+end
+
+def grab_stores_from_string(string)
+  return /([\d]+).* ([\d]+)/.match(string)[2]
+end
+
 
 #### ------- Comment Information Scrape ------------- ######
+
+def get_names
+  units = grab_text(@doc.xpath("//div[contains(@class, 'productlistdetail')]/h3"))
+end
+
 def get_products
   products = @doc.xpath("//ul[contains(@class, 'content')]/li")
 end
@@ -76,8 +105,17 @@ def get_number_of_votes
 end
 
 def get_price
-  votes = grab_price(@doc.xpath("//div[contains(@class, 'product-info')]/div"))
+  price = grab_price(@doc.xpath("//div[contains(@class, 'product-info')]/div"))
 end
+
+def get_units
+  units = grab_units(@doc.xpath("//div[contains(@class, 'inventory')]"))
+end
+
+def get_stores
+  units = grab_stores(@doc.xpath("//div[contains(@class, 'inventory')]"))
+end
+
 
 get_price
 binding.pry
